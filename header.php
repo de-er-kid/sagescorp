@@ -5,7 +5,7 @@
     <meta charset="<?php bloginfo('charset'); ?>">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title><?php wp_title('|', true, 'right'); ?></title>
+    <!-- <title><?php // wp_title('|', true, 'right'); ?></title> -->
     <?php wp_head(); ?>
 </head>
 
@@ -14,7 +14,7 @@
 
     <?php
     if (!is_front_page() && !is_home()) {
-        get_template_part('template-parts/header-top.php');
+        get_template_part('template-parts/header-top');
     } else {
         ?>
         <!-- Loader -->
@@ -59,22 +59,32 @@
                             <li><a href="<?php echo esc_url(home_url('/')); ?>">Home</a></li>
                             <li><a href="<?php echo esc_url(home_url('/about')); ?>">About Us</a></li>
                             <li>
-                                <a href="#">Services <i class="fas fa-chevron-down"></i></a>
+                                <a href="/services">Services <i class="fas fa-chevron-down"></i></a>
+                                <?php
+                                $services_args = array(
+                                    'post_type' => 'services',
+                                    'post_status' => 'publish',
+                                    'posts_per_page' => -1,
+                                    'orderby' => 'title',
+                                    'order' => 'ASC',
+                                );
+
+                                $services_query = new WP_Query($services_args);
+                                ?>
+
                                 <div class="sub-menu">
                                     <ul>
-                                        <li><a href="<?php echo esc_url(home_url('/business-setup')); ?>">Business
-                                                Setup</a></li>
-                                        <li><a
-                                                href="<?php echo esc_url(home_url('/registrations')); ?>">Registrations</a>
-                                        </li>
-                                        <li><a href="<?php echo esc_url(home_url('/trademark')); ?>">Trademark</a></li>
-                                        <li><a href="<?php echo esc_url(home_url('/gst')); ?>">Goods & Services Tax</a>
-                                        </li>
-                                        <li><a href="<?php echo esc_url(home_url('/income-tax')); ?>">Income Tax</a>
-                                        </li>
-                                        <li><a href="<?php echo esc_url(home_url('/mca')); ?>">MCA</a></li>
-                                        <li><a href="<?php echo esc_url(home_url('/compliance')); ?>">Compliance</a>
-                                        </li>
+                                        <?php if ($services_query->have_posts()): ?>
+                                            <?php while ($services_query->have_posts()):
+                                                $services_query->the_post(); ?>
+                                                <li>
+                                                    <a href="<?php echo esc_url(get_permalink()); ?>"><?php the_title(); ?></a>
+                                                </li>
+                                            <?php endwhile; ?>
+                                            <?php wp_reset_postdata(); ?>
+                                        <?php else: ?>
+                                            <li>No services found.</li>
+                                        <?php endif; ?>
                                     </ul>
                                 </div>
                             </li>

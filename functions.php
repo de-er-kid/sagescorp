@@ -44,4 +44,42 @@ function sagescorp_enqueue_scripts() {
     wp_enqueue_script('theme-js', get_template_directory_uri() . '/assets/js/theme.js', array('jquery'), null, true);
 }
 add_action('wp_enqueue_scripts', 'sagescorp_enqueue_scripts');
+
+function create_services_cpt() {
+    $labels = array(
+        'name' => 'Services',
+        'singular_name' => 'Service',
+        'menu_name' => 'Services',
+        'add_new' => 'Add New Service',
+        'add_new_item' => 'Add New Service',
+        'edit_item' => 'Edit Service',
+        'new_item' => 'New Service',
+        'view_item' => 'View Service',
+        'search_items' => 'Search Services',
+        'not_found' => 'No Services found',
+        'not_found_in_trash' => 'No Services found in Trash',
+    );
+
+    $args = array(
+        'labels' => $labels,
+        'public' => true,
+        'has_archive' => true,
+        'rewrite' => array('slug' => 'services'),
+        'supports' => array('title', 'editor', 'thumbnail', 'excerpt'),
+        'menu_icon' => 'dashicons-admin-tools', // Icon for the CPT in the admin menu
+    );
+
+    register_post_type('services', $args);
+}
+add_action('init', 'create_services_cpt');
+
+function enqueue_sticky_tabs_assets() {
+    if (is_singular('services')) {
+        wp_enqueue_style('sticky-tabs', get_template_directory_uri() . '/assets/css/sticky-tabs.css', array(), null, 'all');
+
+        wp_enqueue_script('sticky-tabs', get_template_directory_uri() . '/assets/js/sticky-tabs.js', array('jquery'), null, true);
+    }
+}
+add_action('wp_enqueue_scripts', 'enqueue_sticky_tabs_assets');
+
 ?>
